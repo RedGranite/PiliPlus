@@ -63,6 +63,7 @@ jobs:
             - name: Upload APKs
               uses: actions/upload-artifact@v7
               with:
-                  archive: false
+                  # all three split-per-abi APKs go into one artifact (archive:
+                  # false only permits a single file, so it is omitted here)
                   name: Android-release-apks
                   path: PiliPlus_android_*.apk
