@@ -9,6 +9,7 @@ import 'package:PiliPlus/models/common/dynamic/dynamic_badge_mode.dart';
 import 'package:PiliPlus/models/common/dynamic/dynamics_type.dart';
 import 'package:PiliPlus/models/common/dynamic/up_panel_position.dart';
 import 'package:PiliPlus/models/common/follow_order_type.dart';
+import 'package:PiliPlus/models/common/memory_progress_mode.dart';
 import 'package:PiliPlus/models/common/member/tab_type.dart';
 import 'package:PiliPlus/models/common/msg/msg_unread_type.dart';
 import 'package:PiliPlus/models/common/nav_bar_config.dart';
@@ -970,6 +971,10 @@ abstract final class Pref {
   static SkipType get pgcSkipType =>
       SkipType.values[_setting.get(SettingBoxKey.pgcSkipType) ??
           SkipType.skipOnce.index];
+
+  static MemoryProgressMode get memoryProgressMode =>
+      MemoryProgressMode.values[_setting.get(SettingBoxKey.memoryProgressMode) ??
+          MemoryProgressMode.exceptFav.index];
 
   static PlayRepeat get audioPlayMode =>
       PlayRepeat.values[_setting.get(SettingBoxKey.audioPlayMode) ??

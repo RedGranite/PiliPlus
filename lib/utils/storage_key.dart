@@ -27,6 +27,7 @@ abstract final class SettingBoxKey {
       keyboardControl = 'keyboardControl',
       pauseOnMinimize = 'pauseOnMinimize',
       pgcSkipType = 'pgcSkipType',
+      memoryProgressMode = 'memoryProgressMode',
       audioPlayMode = 'audioPlayMode',
       showBatteryLevel = 'showBatteryLevel',
       playerVolume = 'playerVolume',
