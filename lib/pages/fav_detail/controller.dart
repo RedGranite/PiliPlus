@@ -221,18 +221,19 @@ class FavDetailController
       cid: item.ugc!.firstCid!,
       cover: item.cover,
       title: item.title,
-      extraArguments: isPlayAll.value
-          ? {
-              'sourceType': SourceType.fav,
-              'mediaId': folder.id,
-              'oid': item.id,
-              'favTitle': folder.title,
-              'count': folder.mediaCount,
-              'desc': true,
-              if (index != null) 'isContinuePlaying': index != 0,
-              'isOwner': isOwner,
-            }
-          : null,
+      extraArguments: {
+        'fromFav': true,
+        if (isPlayAll.value) ...{
+          'sourceType': SourceType.fav,
+          'mediaId': folder.id,
+          'oid': item.id,
+          'favTitle': folder.title,
+          'count': folder.mediaCount,
+          'desc': true,
+          if (index != null) 'isContinuePlaying': index != 0,
+          'isOwner': isOwner,
+        },
+      },
     );
   }
 }
