@@ -25,7 +25,10 @@ jobs:
               run: flutter pub get
 
             - name: Analyze
-              run: flutter analyze
+              # --no-fatal-infos: the vendored lib/common/widgets/flutter/* copies
+              # carry many pre-existing info-level lints; still fail on real
+              # warnings/errors in our own code.
+              run: flutter analyze --no-fatal-infos
 
             - name: Test
               run: flutter test
