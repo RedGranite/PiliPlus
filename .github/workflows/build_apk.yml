@@ -1,0 +1,68 @@
+name: Build APK (fork)
+
+# Self-contained Android build for this fork's feature branch.
+# The upstream build.yml only builds Android on pull_request (gated to the
+# upstream repo) or workflow_dispatch (needs the workflow registered on the
+# default branch). A push trigger sidesteps both so the branch builds directly.
+
+on:
+    push:
+        branches:
+            - feat/memory-play-progress-toggle
+        paths-ignore:
+            - "**.md"
+            - "docs/**"
+    workflow_dispatch:
+
+jobs:
+    android:
+        name: Release Android APK
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Setup Java
+              uses: actions/setup-java@v5
+              with:
+                  distribution: "zulu"
+                  java-version: "17"
+                  cache: "gradle"
+                  cache-dependency-path: |
+                      android/*.gradle*
+                      android/**/gradle-wrapper.properties
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: stable
+                  flutter-version-file: pubspec.yaml
+                  cache: true
+
+            - name: Apply Patch
+              shell: pwsh
+              run: lib/scripts/patch.ps1 android
+
+            - name: Set and Extract version
+              shell: pwsh
+              run: lib/scripts/build.ps1 android
+
+            - name: Flutter Build Release Apk
+              run: flutter build apk --release --split-per-abi --dart-define-from-file=pili_release.json --pub
+
+            - name: Rename
+              shell: bash
+              run: |
+                  for file in build/app/outputs/flutter-apk/app-*-release.apk; do
+                    abi=$(echo "$file" | sed -E 's|.*app-(.*)-release\.apk|\1|')
+                    mv "$file" "PiliPlus_android_${{ env.version }}_${abi}.apk"
+                  done
+
+            - name: Upload APKs
+              uses: actions/upload-artifact@v7
+              with:
+                  archive: false
+                  name: Android-release-apks
+                  path: PiliPlus_android_*.apk
