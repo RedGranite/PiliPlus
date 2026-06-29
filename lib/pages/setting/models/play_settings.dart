@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:PiliPlus/common/widgets/custom_icon.dart';
+import 'package:PiliPlus/models/common/memory_progress_mode.dart';
 import 'package:PiliPlus/models/common/super_chat_type.dart';
 import 'package:PiliPlus/models/common/video/subtitle_pref_type.dart';
 import 'package:PiliPlus/pages/main/controller.dart';
@@ -23,6 +24,15 @@ import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 List<SettingsModel> get playSettings => [
+  PopupModel<MemoryProgressMode>(
+    title: '记忆播放进度',
+    leading: const Icon(Icons.history),
+    value: () => Pref.memoryProgressMode,
+    items: MemoryProgressMode.values,
+    onSelected: (value, setState) => GStorage.setting
+        .put(SettingBoxKey.memoryProgressMode, value.index)
+        .whenComplete(setState),
+  ),
   const SwitchModel(
     title: '弹幕开关',
     subtitle: '是否展示弹幕',
