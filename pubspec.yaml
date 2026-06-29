@@ -223,7 +223,9 @@ dependency_overrides:
     git:
       url: https://github.com/bggRGjQaUbCoE/screen_brightness.git
       path: screen_brightness_android
-      ref: main
+      # upstream deleted the `main` branch; pin to the commit pubspec.lock
+      # already resolved to (the dead branch broke `flutter pub get`).
+      ref: 350f4433ca48d84f4dd0bfa509ab8aea734a6105
   cached_network_image_ce:
     git:
       url: https://github.com/My-Responsitories/flutter_cached_network_image_ce.git
