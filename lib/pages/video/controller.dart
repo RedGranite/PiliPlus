@@ -14,6 +14,7 @@ import 'package:PiliPlus/http/loading_state.dart';
 import 'package:PiliPlus/http/user.dart';
 import 'package:PiliPlus/http/video.dart';
 import 'package:PiliPlus/models/common/account_type.dart';
+import 'package:PiliPlus/models/common/memory_progress_mode.dart';
 import 'package:PiliPlus/models/common/sponsor_block/action_type.dart';
 import 'package:PiliPlus/models/common/sponsor_block/post_segment_model.dart';
 import 'package:PiliPlus/models/common/sponsor_block/segment_model.dart';
@@ -96,6 +97,12 @@ class VideoDetailController extends GetxController
   late bool isPlayAll;
   late SourceType sourceType;
   late BiliDownloadEntryInfo entry;
+
+  bool get _isFromFav =>
+      sourceType == SourceType.fav || args['fromFav'] == true;
+
+  bool get _shouldMemoryProgress =>
+      Pref.memoryProgressMode.shouldResume(isFromFav: _isFromFav);
   late bool isFileSource;
   late bool _mediaDesc = false;
   late final RxList<MediaListItemModel> mediaList = <MediaListItemModel>[].obs;
@@ -361,12 +368,11 @@ class VideoDetailController extends GetxController
       width: entry.ep?.width ?? entry.pageData?.width ?? 1,
       height: entry.ep?.height ?? entry.pageData?.height ?? 1,
     );
-    if (watchProgress.get(cid.value.toString()) case final int progress?) {
-      if (progress >= entry.totalTimeMilli - 400) {
-        defaultST = Duration.zero;
-      } else {
-        defaultST = Duration(milliseconds: progress);
-      }
+    final int? localProgress = _shouldMemoryProgress
+        ? watchProgress.get(cid.value.toString())
+        : null;
+    if (localProgress != null && localProgress < entry.totalTimeMilli - 400) {
+      defaultST = Duration(milliseconds: localProgress);
     } else {
       defaultST = Duration.zero;
     }
@@ -869,7 +875,9 @@ class VideoDetailController extends GetxController
         if (progress != null) {
           defaultST = Duration(milliseconds: progress);
         } else {
-          defaultST = Duration(milliseconds: data.lastPlayTime);
+          defaultST = Duration(
+            milliseconds: _shouldMemoryProgress ? data.lastPlayTime : 0,
+          );
         }
       }
 
